@@ -2,7 +2,7 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function ProfilePage() {
 
     const router = useRouter();
@@ -21,10 +21,19 @@ export default function ProfilePage() {
     const [data, setData] = useState("");
 
     const getUserDetails = async ()=>{
-        const res = await axios.get('/api/users/me')
+        try {
+            const res = await axios.get('/api/users/me')
         console.log(res.data);
         setData(res.data.data._id)
+        } catch (error:any) {
+            console.log(error.message);
+            
+        }
     }
+
+    useEffect(()=>{
+        getUserDetails()
+    },[])
 
     return (
         <div
