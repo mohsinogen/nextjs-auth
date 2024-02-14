@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/user.models";
 import { connect } from "@/dbConfig/dbConfig";
 import bcryptjs from "bcryptjs";
+import { sendEmail } from "@/helpers/mailer";
 
 connect();
 
@@ -9,36 +10,40 @@ export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
 
-    const { token, newPassword } = reqBody;
+    const { email } = reqBody;
 
-    console.log("token", token);
 
     const user = await User.findOne({
-      forgotPasswordToken: token,
-      forgotPasswordTokenExpiry: { $gt: Date.now() },
+      email
     });
 
     if (!user) {
-      return NextResponse.json({
-        error: "User not found",
-        status: 404,
-      });
+      return NextResponse.json({ error: "User not found with given email" }, { status: 404 });
     }
 
-    console.log(user);
-
-    const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(newPassword, salt);
-
-    user.password = hashedPassword;
-
-    await user.save();
+    await sendEmail({
+      email,
+      emailType:"RESET",
+      userId: user._id
+     })
 
     return NextResponse.json({
-      message: "Password updated",
+      message: "Password reset link sent",
       success: true,
     });
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+/* 
+export async function PUT(request: NextRequest){
+
+  try {
+    
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+} */

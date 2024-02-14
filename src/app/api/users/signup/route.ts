@@ -17,10 +17,14 @@ export async function POST(request: NextRequest) {
     const user = await User.findOne({ email });
 
     if (user) {
-      return NextResponse.json({
-        error: "User already exist",
-        status: 400,
-      });
+      return NextResponse.json(
+        {
+          error: "User already exist",
+        },
+        {
+          status: 400,
+        }
+      );
     }
 
     const salt = await bcryptjs.genSalt(10);
@@ -38,9 +42,9 @@ export async function POST(request: NextRequest) {
 
     await sendEmail({
       email,
-      emailType:"VERIFY",
-      userId: savedUser._id
-    })
+      emailType: "VERIFY",
+      userId: savedUser._id,
+    });
 
     return NextResponse.json({
       message: "User created successfully",
@@ -49,9 +53,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.log(error.message);
-    return NextResponse.json({
-      error: error.message,
-      status: 500,
-    });
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

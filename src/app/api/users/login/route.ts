@@ -14,17 +14,17 @@ export async function POST(request: NextRequest) {
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({
-        error: "User does not exist",
-        status: 400,
-      });
+        error: "User does not exist"},
+        {status: 400}
+      );
     }
 
     const validPassword = await bcryptjs.compare(password, user.password);
 
     if (!validPassword) {
       return NextResponse.json({
-        error: "Email or Password is incorrect",
-        status: 400,
+        error: "Email or Password is incorrect"},
+        {status: 400
       });
     }
 
@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     return NextResponse.json({
-      error: error.message,
-      status: 500,
+      error: error.message},{
+      status: 500
     });
   }
 }

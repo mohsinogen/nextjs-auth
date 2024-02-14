@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 export default function LoginPage() {
@@ -25,11 +25,11 @@ export default function LoginPage() {
 
             console.log("login success", response);
 
-            toast.success("login success");
+            toast.success("Login success");
             router.push("/profile");
         } catch (error: any) {
             console.log("login error", error.message);
-            toast.error(error.message);
+            toast.error(error.response.data.error);
         } finally {
             setLoading(false);
         }
@@ -45,6 +45,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
+            <Toaster />
             <div className="w-full max-w-xs">
                 <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
@@ -93,6 +94,10 @@ export default function LoginPage() {
                             New User? <Link className="text-blue-500 underline" href={"/signup"}>Signup</Link>
                         </div>
 
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between">
+                           <Link className="text-blue-500 underline" href={"/forgotpassword"}>Forgot Password</Link>
                     </div>
                 </form>
                 
